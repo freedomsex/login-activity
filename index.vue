@@ -31,7 +31,7 @@ export default {
   methods: {
     async send() {
       try {
-        let {data} = await this.$service.run('login/send', {
+        let data = await this.$service.run('login/send', {
           login: this.form.login,
           password: this.form.password,
           token: this.captcha.token,
@@ -43,18 +43,24 @@ export default {
       }
     },
     onLogin(data) {
-      this.hint = data.say;
-      this.captcha.enabled = data.strict;
-      if (data && !data.error) {
-        this.hint = 'Успешно. Подождите.';
-        window.location.href = '/';
-      } else {
-        this.onError(data);
-      }
+      this.hint = 'Успешно. Подождите.';
+      window.location.href = '/';
     },
-    onError(error) {
-      this.form.error = error;
-      this.$refs.captcha.refresh();
+    onError({error, say, strict}) {
+      this.hint = say;
+      if (strict || error == 'code') {
+        this.captcha.enabled = true;
+      }
+      if (error == 'locked') {
+        //
+      }
+      if (error == 'auth') {
+        //
+      }
+      if (this.form.error && this.$refs.captcha) {
+        this.$refs.captcha.refresh();
+      }
+      this.form.error = true;
     },
     setToken(token) {
       this.captcha.token = token;
@@ -77,7 +83,7 @@ export default {
             <span class="icon is-small is-left">
               <i class="material-icons">person</i>
             </span>
-            <input class="input" type="text" v-model="login" placeholder="Введите логин">
+            <input class="input" type="text" v-model="form.login" placeholder="Введите логин">
           </div>
         </div>
       </div>
@@ -88,11 +94,11 @@ export default {
           <span class="icon is-small is-left">
             <i class="material-icons">vpn_key</i>
           </span>
-          <input class="input" type="text" v-model="password" placeholder="Введите пароль">
+          <input class="input" type="text" v-model="form.password" placeholder="Введите пароль">
         </div>
       </div>
 
-      <div class="activity-section" v-show="form.error && captcha.enabled">
+      <div class="activity-section" v-if="form.error && captcha.enabled">
         <div class="activity-section__title">Код</div>
         <CaptchaImage ref="captcha" @token="setToken" @input="setCode"/>
       </div>
