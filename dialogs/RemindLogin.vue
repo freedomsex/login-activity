@@ -1,6 +1,6 @@
 <script>
 import StandartDialog from '@freedomsex/modal-dialogs/StandartDialog';
-import CaptchaImage from '@freedomsex/captcha-image';
+import CaptchaImage from '@freedomsex/captcha-image/SimpleCaptcha';
 import EmailSended from './EmailSended';
 
 export default {
@@ -99,7 +99,7 @@ export default {
 
         <div class="activity-section" v-show="error && captcha.need" style="max-width: 270px;">
           <div class="activity-section__title">Код</div>
-          <CaptchaImage ref="captcha" @token="setToken" @input="setCode"/>
+          <CaptchaImage ref="captcha" apiName="auth" @token="setToken" @input="setCode"/>
         </div>
 
         <div class="modal__section">
@@ -120,8 +120,5 @@ export default {
 </template>
 
 <style lang="less">
-.btn-fat {
-  padding-left: @indent-xl;
-  padding-right: @indent-xl;
-}
+
 </style>

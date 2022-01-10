@@ -1,9 +1,9 @@
 <script>
-import CaptchaImage from '@freedomsex/captcha-image';
+import CaptchaImage from '@freedomsex/captcha-image/SimpleCaptcha';
 import RemindLogin from './dialogs/RemindLogin';
 
 export default {
-  props: [],
+  props: ['authApi', 'captchaApi'],
   data() {
     return {
       form: {
@@ -46,16 +46,25 @@ export default {
       this.hint = 'Успешно. Подождите.';
       window.location.href = '/';
     },
-    onError({error, say, strict}) {
-      this.hint = say;
-      if (strict || error == 'code') {
+    onError({response}) {
+      this.captcha.enabled = false;
+      let {status} = response;
+      if (status == 428) {
         this.captcha.enabled = true;
+        this.hint = 'Введите код.';
       }
-      if (error == 'locked') {
+      if (status == 424) {
+        this.captcha.enabled = true;
+        this.hint = 'Неверный код.';
         //
       }
-      if (error == 'auth') {
+      if (status == 423) {
+        this.captcha.enabled = true;
+        this.hint = 'Восстановите пароль.';
         //
+      }
+      if (status == 401) {
+        this.hint = 'Неверный логин или пароль.';
       }
       if (this.form.error && this.$refs.captcha) {
         this.$refs.captcha.refresh();
@@ -100,7 +109,7 @@ export default {
 
       <div class="activity-section" v-if="form.error && captcha.enabled">
         <div class="activity-section__title">Код</div>
-        <CaptchaImage ref="captcha" @token="setToken" @input="setCode"/>
+        <CaptchaImage ref="captcha" apiName="auth" @token="setToken" @input="setCode"/>
       </div>
     </div>
 

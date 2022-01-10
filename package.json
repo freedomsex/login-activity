@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@freedomsex/captcha-image": "^1.0.1",
+    "@freedomsex/captcha-image": "^1.1.4",
     "@freedomsex/modal-dialogs": "^2.0.0",
     "@freedomsex/service-worker": "^0.1.0",
     "@freedomsex/styles": "^0.1.2",
